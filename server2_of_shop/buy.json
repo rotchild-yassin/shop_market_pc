@@ -218,5 +218,71 @@
     "quantity": 1,
     "totalPrice": "2500$",
     "date": "2025-12-22T13:06:58.900Z"
+  },
+  {
+    "firstName": "rayen",
+    "lastName": "hamdi",
+    "email": "mouhamed@gmail.com",
+    "phone": "29229265",
+    "productName": "Windows 12 Pro",
+    "productImage": "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400",
+    "quantity": 1,
+    "totalPrice": "2500$",
+    "date": "2025-12-22T13:29:22.675Z"
+  },
+  {
+    "firstName": "mouamed",
+    "lastName": "ouslati",
+    "email": "chihaoui@gmail.com",
+    "phone": "21164245",
+    "productName": "Windows 12 Ultimate",
+    "productImage": "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400",
+    "quantity": 1,
+    "totalPrice": "3000 $",
+    "date": "2025-12-22T20:07:20.445Z"
+  },
+  {
+    "firstName": "mouamed",
+    "lastName": "ouslati",
+    "email": "chihaoui@gmail.com",
+    "phone": "21164245",
+    "productName": "ASUS ROG Gaming",
+    "productImage": "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=400",
+    "quantity": 1,
+    "totalPrice": "2500 $",
+    "date": "2025-12-22T20:07:20.445Z"
+  },
+  {
+    "firstName": "mouamed",
+    "lastName": "ouslati",
+    "email": "chihaoui@gmail.com",
+    "phone": "21164245",
+    "productName": "ASUS ROG Strix G16",
+    "productImage": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400",
+    "quantity": 1,
+    "totalPrice": "2500 $",
+    "date": "2025-12-22T20:07:20.445Z"
+  },
+  {
+    "firstName": "mouamed",
+    "lastName": "ouslati",
+    "email": "chihaoui@gmail.com",
+    "phone": "21164245",
+    "productName": "MSI Thin GF63",
+    "productImage": "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=400",
+    "quantity": 1,
+    "totalPrice": "1800 $",
+    "date": "2025-12-22T20:07:20.445Z"
+  },
+  {
+    "firstName": "mouamed",
+    "lastName": "ouslati",
+    "email": "chihaoui@gmail.com",
+    "phone": "21164245",
+    "productName": "Gaming Laptop Pro",
+    "productImage": "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=400",
+    "quantity": 1,
+    "totalPrice": "2200 $",
+    "date": "2025-12-22T20:07:20.445Z"
   }
 ]

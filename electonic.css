@@ -1,0 +1,18 @@
+h1 {
+      transition: color 2s ease;
+    }
+    h1:hover {
+      color: blueviolet;
+    }
+    .error-message {
+      color: #c40000;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+    .error-message.show {
+      display: block;
+    }
+    .form-control.is-invalid {
+      border-color: #c40000;
+    }

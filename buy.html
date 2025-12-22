@@ -266,18 +266,65 @@ function closeCartIfOutside(e){
     closeCart();
   }
 }
-
 function checkout(){
   if(cart.length===0){
     alert('Votre panier est vide!');
     return;
   }
-  const total=cart.reduce((sum,item)=>sum+(item.price*item.quantity),0);
-  alert(`Commande confirmée!\nTotal: ${total} $\n\nMerci pour votre achat!`);
-  cart=[];
-  updateCartUI();
-  closeCart();
+
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+  if(!user){
+    alert('Vous devez être connecté pour acheter!');
+    return;
+  }
+
+  // Build array of purchases
+  const buysData = cart.map(item => ({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    phone: user.phone,
+    productName: item.name,
+    productImage: item.image,
+    quantity: item.quantity,
+    totalPrice: (item.price * item.quantity) + "$"
+  }));
+
+  const total = buysData.reduce((sum, item) => sum + item.totalPrice,"");
+
+  // Send purchases to server to save in buy.json
+  fetch('http://localhost:4000/buy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(buysData)
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+    alert(`Commande confirmée!\nTotal: ${total} \n\nMerci pour votre achat!`);
+    cart = [];
+    updateCartUI();
+    closeCart();
+  })
+  .catch(err => {
+    console.error(err);
+    alert('Erreur serveur, veuillez réessayer.');
+  });
 }
+
+
+
+// function checkout(){
+//   if(cart.length===0){
+//     alert('Votre panier est vide!');
+//     return;
+//   }
+//   const total=cart.reduce((sum,item)=>sum+(item.price*item.quantity),0);
+//   alert(`Commande confirmée!\nTotal: ${total} $\n\nMerci pour votre achat!`);
+//   cart=[];
+//   updateCartUI();
+//   closeCart();
+// }
 
 // ---- Profile ----
 const accountBtn=document.getElementById('accountBtn');

@@ -6,6 +6,7 @@
     <title>Create Account</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="crée un compte.css">
+    <link rel="website icon" type="jpg" href="G1.jpg">
     
     
 </head>
@@ -115,32 +116,32 @@
         const confirmPassword = document.getElementById('confirmPassword');
 
         if (!firstName.value || !isAlpha(firstName.value) || firstName.value.length > 7) {
-            showError('firstNameError', 'الاسم غير صحيح');
+            showError('firstNameError', 'the name is empty');
             ok = false;
         } else markValid('firstName');
 
         if (!lastName.value || !isAlpha(lastName.value) || lastName.value.length > 7) {
-            showError('lastNameError', 'اللقب غير صحيح');
+            showError('lastNameError', 'the first name is empty');
             ok = false;
         } else markValid('lastName');
 
         if (!email.value || !isValidEmail(email.value)) {
-            showError('emailError', 'إيميل غير صحيح');
+            showError('emailError', 'the email is not true');
             ok = false;
         } else markValid('email');
 
         if (!phone.value || !isValidPhone(phone.value)) {
-            showError('phoneError', 'رقم الهاتف غير صحيح');
+            showError('phoneError', 'the phone number is false');
             ok = false;
         } else markValid('phone');
 
         if (!password.value || password.value.includes(' ') || password.value.length > 10) {
-            showError('passwordError', 'كلمة السر غير صالحة');
+            showError('passwordError', 'the password is not valid');
             ok = false;
         } else markValid('password');
 
         if (confirmPassword.value !== password.value) {
-            showError('confirmPasswordError', 'كلمة السر غير متطابقة');
+            showError('confirmPasswordError', 'the confirmpassword is not the same password');
             ok = false;
         } else markValid('confirmPassword');
 

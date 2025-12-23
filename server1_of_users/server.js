@@ -175,6 +175,7 @@ app.delete('/api/users', async (req, res) => {
 /* ===================== START SERVER ===================== */
 initializeUsersFile().then(() => {
     app.listen(PORT, () => {
+        console.log("server is runing on port 3000")
         console.log(`Server running on http://localhost:${PORT}`);
     });
 });

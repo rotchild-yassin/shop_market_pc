@@ -12,36 +12,35 @@
 
 </head>
 <body>
-
 <!-- Header -->
 <header class="header">
-<div class="container">
-<div class="row align-items-center g-3">
-<div class="col-6 col-md-2">
-<img src="logo-pcmarket-200.jpg" alt="PC Market" class="logo">
-</div>
-<div class="col-12 col-md-6">
-<div class="search-box">
-<div class="input-group">
-<input type="search" class="form-control" placeholder="Rechercher un produit...">
-<button class="btn btn-light"><i class="bi bi-search"></i></button>
-</div>
-</div>
-</div>
-<div class="col-6 col-md-4">
-<div class="header-icons d-flex justify-content-end gap-3">
-<a href="#" class="text-center" id="accountBtn">
-<i class="bi bi-person-circle"></i>
-<small>Compte</small>
-</a>
-<a onclick="openCart()" class="text-center">
-<i class="bi bi-bag-check"></i>
-<small>Panier (<span id="headerCartCount">0</span>)</small>
-</a>
-</div>
-</div>
-</div>
-</div>
+  <div class="container">
+    <div class="row align-items-center g-3">
+      <div class="col-6 col-md-2">
+        <img src="G1.jpg" alt="PC Market" class="logo">
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="search-box">
+          <div class="input-group">
+            <input type="search" class="form-control" placeholder="Rechercher un produit...">
+            <button class="btn btn-light"><i class="bi bi-search"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="header-icons d-flex justify-content-end gap-3">
+          <a href="#" class="text-center" id="accountBtn">
+            <i class="bi bi-person-circle"></i>
+            <small>Compte</small>
+          </a>
+          <a onclick="openCart()" class="text-center">
+            <i class="bi bi-bag-check"></i>
+            <small>Panier (<span id="headerCartCount">0</span>)</small>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </header>
 
 <!-- Carousel -->
@@ -118,11 +117,24 @@
   </div>
 </div>
 
+<!-- Error Modal (for login requirement) -->
+<div class="cart-modal" id="errorModal" onclick="closeErrorIfOutside(event)">
+  <div class="cart-panel" style="max-width: 400px;" onclick="event.stopPropagation()">
+    <div class="cart-header" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
+      <h2>Connexion requise</h2>
+      <button class="close-cart" onclick="closeError()">&times;</button>
+    </div>
+    <div class="cart-items" style="flex-direction: column; padding: 2rem; text-align: center;">
+      <i class="bi bi-exclamation-triangle" style="font-size: 4rem; color: #dc3545; margin-bottom: 1rem;"></i>
+      <p style="margin-bottom: 1.5rem;">Vous devez être connecté pour ajouter des produits au panier.</p>
+      <button class="checkout-btn" onclick="goToLogin()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <i class="bi bi-box-arrow-in-right"></i> Se connecter
+      </button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
-</body>
-</html>
 <script>
 // ------ Products ------
 const products=[
@@ -137,14 +149,13 @@ const products=[
   {id:9,name:"Windows 12 Ultimate",specs:"Intel Core i9 • 1TB SSD • 64GB RAM • AI",price:3000,image:"https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400"}
 ];
 
-// Load cart from localStorage on page load (user-specific)
 let cart = [];
 
 // ---- Get user-specific cart key ----
 function getUserCartKey() {
   const user = JSON.parse(localStorage.getItem('currentUser'));
   if (user) {
-    return `cart_${user.email}`; // Use email as unique identifier
+    return `cart_${user.email}`;
   }
   return null;
 }
@@ -196,7 +207,7 @@ function goToLogin() {
 // ---- Render Products ----
 function renderProducts(filteredProducts = products){
   const grid=document.getElementById('productsGrid');
-  grid.innerHTML = ''; // Clear existing products
+  grid.innerHTML = '';
   
   if(filteredProducts.length === 0) {
     grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #666;">
@@ -220,7 +231,7 @@ function searchProducts(searchTerm) {
   const term = searchTerm.toLowerCase().trim();
   
   if(term === '') {
-    renderProducts(products); // Show all products if search is empty
+    renderProducts(products);
     return;
   }
   
@@ -237,17 +248,14 @@ function setupSearch() {
   const searchInput = document.querySelector('input[type="search"]');
   const searchBtn = document.querySelector('.search-box .btn');
   
-  // Real-time search on input change
   searchInput.addEventListener('input', (e) => {
     searchProducts(e.target.value);
   });
   
-  // Search on button click
   searchBtn.addEventListener('click', () => {
     searchProducts(searchInput.value);
   });
   
-  // Search on Enter key
   searchInput.addEventListener('keypress', (e) => {
     if(e.key === 'Enter') {
       e.preventDefault();
@@ -281,7 +289,6 @@ function decreaseQuantity(id){
 }
 
 function addToCart(id){
-  // Check if user is logged in
   if(!isUserLoggedIn()) {
     showError();
     return;
@@ -296,7 +303,7 @@ function addToCart(id){
   else{
     cart.push({...product, quantity: qty});
   }
-  saveCartToLocalStorage(); // Save cart after adding
+  saveCartToLocalStorage();
   updateCartUI();
   document.getElementById(`qty-${id}`).value=1;
   document.getElementById(`price-${id}`).textContent=`${product.price} $`;
@@ -332,7 +339,7 @@ function renderCartItems(){
 
 function removeFromCart(index){
   cart.splice(index,1);
-  saveCartToLocalStorage(); // Save cart after removing
+  saveCartToLocalStorage();
   updateCartUI();
 }
 
@@ -350,6 +357,7 @@ function closeCartIfOutside(e){
   }
 }
 
+// ---- FIXED CHECKOUT FUNCTION ----
 function checkout(){
   if(cart.length===0){
     alert('Votre panier est vide!');
@@ -376,34 +384,51 @@ function checkout(){
 
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  // Send purchases to server to save in buy.json
+  // Try to send to server, but continue even if it fails
   fetch('http://localhost:4000/buy', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(buysData)
   })
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) {
+      throw new Error('Server error');
+    }
+    return res.json();
+  })
   .then(data => {
-    console.log(data);
-    alert(`Commande confirmée!\nTotal: ${total} $\n\nMerci pour votre achat!`);
-    cart = [];
-    saveCartToLocalStorage(); // Clear cart from localStorage after successful checkout
-    updateCartUI();
-    closeCart();
+    console.log('Order saved to server:', data);
   })
   .catch(err => {
-    console.error(err);
-    alert('Erreur serveur, veuillez réessayer.');
+    console.warn('Server not available, order saved locally only:', err);
+    // Save order to localStorage as backup
+    const orders = JSON.parse(localStorage.getItem('pendingOrders') || '[]');
+    orders.push({
+      date: new Date().toISOString(),
+      user: user.email,
+      items: buysData,
+      total: total
+    });
+    localStorage.setItem('pendingOrders', JSON.stringify(orders));
+  })
+  .finally(() => {
+    // Always complete the checkout regardless of server status
+    alert(`Commande confirmée!\nTotal: ${total} $\n\nMerci pour votre achat!`);
+    cart = [];
+    saveCartToLocalStorage();
+    updateCartUI();
+    closeCart();
   });
 }
 
 // ---- Profile ----
 const accountBtn=document.getElementById('accountBtn');
-accountBtn.addEventListener('click',()=>{
+accountBtn.addEventListener('click',(e)=>{
+  e.preventDefault();
   const user=JSON.parse(localStorage.getItem('currentUser'));
   if(user){
     const container=document.getElementById('profileContainer');
-    container.innerHTML=`<div style="text-align:center;margin-bottom:1rem;"><div style="text-align:center;margin-bottom:1rem; color:purple;">HELLO ${user.firstName} ${user.lastName}</div><i class="bi bi-person-circle" style="font-size:4rem;color:#667eea;"></i></div><p><strong>ID: ${user.id}</strong><br><br><strong>Nom:</strong> ${user.lastName}</p><p><strong>Prénom:</strong> ${user.firstName}</p><p><strong>Email:</strong> ${user.email}</p><p><strong>Téléphone:</strong> ${user.phone}</p><button class="checkout-btn" onclick="logoutUser()" style="margin-top:1rem;background:linear-gradient(135deg,#dc3545 0%,#c82333 100%);"><i class="bi bi-box-arrow-right"></i> Se déconnecter</button><button class="checkout-btn" onclick="closeProfile()" style="margin-top:0.5rem;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);">Fermer</button>`;
+    container.innerHTML=`<div style="text-align:center;margin-bottom:1rem;"><div style="text-align:center;margin-bottom:1rem; color:purple;">HELLO ${user.firstName} ${user.lastName}</div><i class="bi bi-person-circle" style="font-size:4rem;color:#667eea;"></i></div><p><strong>ID:</strong> ${user.id}</p><p><strong>Nom:</strong> ${user.lastName}</p><p><strong>Prénom:</strong> ${user.firstName}</p><p><strong>Email:</strong> ${user.email}</p><p><strong>Téléphone:</strong> ${user.phone}</p><button class="checkout-btn" onclick="logoutUser()" style="margin-top:1rem;background:linear-gradient(135deg,#dc3545 0%,#c82333 100%);"><i class="bi bi-box-arrow-right"></i> Se déconnecter</button><button class="checkout-btn" onclick="closeProfile()" style="margin-top:0.5rem;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);">Fermer</button>`;
     document.getElementById('profileModal').classList.add('show');
   } else {
     showError();
@@ -427,8 +452,8 @@ function logoutUser(){
 }
 
 // ---- Init ----
-loadUserCart(); // Load user-specific cart first
+loadUserCart();
 renderProducts();
-setupSearch(); // Setup search functionality
-updateCartUI(); // Update cart UI on page load to show saved items
+setupSearch();
+updateCartUI();
 </script>

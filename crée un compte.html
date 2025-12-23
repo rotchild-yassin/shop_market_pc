@@ -25,7 +25,7 @@
                         <h2>Create Account</h2>
                         <div id="successMessage" class="success-message"></div>
                         <div id="serverError" class="server-error"></div>
-                        <form id="signupForm" novalidate >
+                        <form id="signupForm" novalidate>
                             <div class="mb-3">
                                 <label for="firstName" class="form-label">First Name</label>
                                 <input type="text" class="form-control" id="firstName" placeholder="First name">
@@ -72,9 +72,6 @@
         </div>
     </div>
 
-    
-</body>
-</html>
 <script>
     const form = document.getElementById('signupForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -108,7 +105,7 @@
         clearErrors();
         let ok = true;
 
-        const firstName = firstNameInput = document.getElementById('firstName');
+        const firstName = document.getElementById('firstName');
         const lastName = document.getElementById('lastName');
         const email = document.getElementById('email');
         const phone = document.getElementById('phone');
@@ -116,51 +113,59 @@
         const confirmPassword = document.getElementById('confirmPassword');
 
         if (!firstName.value || !isAlpha(firstName.value) || firstName.value.length > 7) {
-            showError('firstNameError', 'the name is empty');
+            showError('firstNameError', 'The name is empty or invalid');
             ok = false;
         } else markValid('firstName');
 
         if (!lastName.value || !isAlpha(lastName.value) || lastName.value.length > 7) {
-            showError('lastNameError', 'the first name is empty');
+            showError('lastNameError', 'The last name is empty or invalid');
             ok = false;
         } else markValid('lastName');
 
         if (!email.value || !isValidEmail(email.value)) {
-            showError('emailError', 'the email is not true');
+            showError('emailError', 'The email is not valid');
             ok = false;
         } else markValid('email');
 
         if (!phone.value || !isValidPhone(phone.value)) {
-            showError('phoneError', 'the phone number is false');
+            showError('phoneError', 'The phone number is invalid');
             ok = false;
         } else markValid('phone');
 
         if (!password.value || password.value.includes(' ') || password.value.length > 10) {
-            showError('passwordError', 'the password is not valid');
+            showError('passwordError', 'The password is not valid');
             ok = false;
         } else markValid('password');
 
         if (confirmPassword.value !== password.value) {
-            showError('confirmPasswordError', 'the confirmpassword is not the same password');
+            showError('confirmPasswordError', 'The passwords do not match');
             ok = false;
         } else markValid('confirmPassword');
 
         return ok;
     };
 
-    const saveUserToServer = async (data) => {
-        try {
-            await fetch(API_URL, {
+    // ✅ FIXED: Save to server without blocking the redirect
+    const saveUserToServer = (data) => {
+        // Use setTimeout with 0ms to make it non-blocking
+        setTimeout(() => {
+            fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
+            })
+            .then(res => {
+                if (res.ok) {
+                    console.log('User saved to server successfully');
+                }
+            })
+            .catch(err => {
+                console.log('Server not available, data saved locally only');
             });
-        } catch (e) {
-            console.log('Server not available, continue anyway');
-        }
+        }, 0);
     };
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', (e) => {
         e.preventDefault();
 
         if (!validateForm()) return;
@@ -169,6 +174,7 @@
         submitBtn.textContent = 'Saving...';
 
         const userData = {
+            id: Date.now(), // Add unique ID
             firstName: document.getElementById('firstName').value,
             lastName: document.getElementById('lastName').value,
             email: document.getElementById('email').value,
@@ -176,12 +182,16 @@
             password: document.getElementById('password').value
         };
 
-        // ✅ حفظ في LocalStorage
+        // ✅ Save to LocalStorage first
         localStorage.setItem('currentUser', JSON.stringify(userData));
 
-        await saveUserToServer(userData);
+        // ✅ Try to save to server (non-blocking)
+        saveUserToServer(userData);
 
-        // تحويل مضمون إلى صفحة المنتجات
-        window.location.href = 'electonic.html';
+        // ✅ Always redirect immediately after saving to localStorage
+        setTimeout(() => {
+            window.location.href = 'electonic.html';
+        }, 500); // Small delay to show "Saving..." message
     });
 </script>
+</body>

@@ -28,17 +28,6 @@
         <div class="col-12 col-md-6">
           <h1 style="font-style: italic; font-size: 40px; text-align: center;">bienvenue au cette centre site web</h1>
         </div>
-
-        <!-- <div class="col-12 col-md-3 d-flex justify-content-center justify-content-md-end gap-4">
-          <a href="#" class="text-dark text-decoration-none text-center">
-            <i class="bi bi-person-circle fs-4"></i><br>
-            <small>Connexion</small>
-          </a>
-          <a href="#" class="text-dark text-decoration-none text-center">
-            <i class="bi bi-bag-dash-fill fs-4"></i><br>
-            <small>Paiement</small>
-          </a>
-        </div> -->
       </div>
     </div>
   </header>
@@ -58,9 +47,9 @@
             <div id="loginError" class="alert alert-danger" style="display: none;"></div>
 
             <div class="mb-3">
-              <label for="username" class="form-label">Adresse e-mail</label>
-              <input type="email" id="username" class="form-control" placeholder="example@example.com">
-              <div id="emailError" class="error-message">Email est requis</div>
+              <label for="username" class="form-label">Adresse e-mail ou numéro de téléphone</label>
+              <input type="text" id="username" class="form-control" placeholder="example@example.com ou +216 12 345 678">
+              <div id="emailError" class="error-message">Email ou numéro de téléphone est requis</div>
             </div>
 
             <div class="mb-3">
@@ -90,79 +79,143 @@
   <footer class="bg-dark text-light pt-5 pb-3">
     <div class="container text-center text-md-start">
       <div class="row gy-4">
-        <div class="col-12 col-md-3">
+        <div class="col-12 col-md-4">
           <img src="logo-pcmarket-200.jpg" alt="Logo" class="img-fluid mb-3" style="max-width:150px;">
         </div>
+        
+        <div class="col-12 col-md-8">
+          <h5 class="mb-3" style="color: #4da6ff; font-weight: bold;">
+            <i class="bi bi-envelope-fill me-2"></i>Contactez-nous
+          </h5>
+          
+          <div class="mb-3">
+            <p class="mb-2"><strong>Email :</strong></p>
+            <p class="mb-1">
+              <i class="bi bi-envelope me-2"></i>
+              <a href="mailto:rotchildyassin@gmail.com" class="text-light text-decoration-none">
+                rotchildyassin@gmail.com
+              </a>
+            </p>
+            <p class="mb-0">
+              <i class="bi bi-envelope me-2"></i>
+              <a href="mailto:yassinchihaoui50@gmail.com" class="text-light text-decoration-none">
+                yassinchihaoui50@gmail.com
+              </a>
+            </p>
+          </div>
+          
+          <div>
+            <p class="mb-2"><strong>Téléphone :</strong></p>
+            <p class="mb-1">
+              <i class="bi bi-telephone-fill me-2"></i>
+              <a href="tel:+21621164245" class="text-light text-decoration-none">
+                +216 21 164 245
+              </a>
+            </p>
+            <p class="mb-1">
+              <i class="bi bi-telephone-fill me-2"></i>
+              <a href="tel:+21694709565" class="text-light text-decoration-none">
+                +216 94 709 565
+              </a>
+            </p>
+            <p class="mb-0">
+              <i class="bi bi-telephone-fill me-2"></i>
+              <a href="tel:+21628289045" class="text-light text-decoration-none">
+                +216 28 289 045
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <hr class="my-4 bg-secondary">
+      
+      <div class="text-center">
+        <p class="mb-0">&copy; 2025 PC Market. Tous droits réservés.</p>
       </div>
     </div>
   </footer>
 
-  
-
 </body>
 </html>
 <script>
-  const API_URL = 'http://localhost:3000/api/users/login';
+const API_URL = 'http://localhost:3000/api/users/login';
 
-    function clearErrors() {
-      document.getElementById('loginError').style.display = 'none';
-      document.getElementById('emailError').classList.remove('show');
-      document.getElementById('passwordError').classList.remove('show');
-      document.getElementById('username').classList.remove('is-invalid');
-      document.getElementById('password').classList.remove('is-invalid');
+/* ✅ FIX: define elements */
+const username = document.getElementById("username");
+const password = document.getElementById("password");
+const loginError = document.getElementById("loginError");
+const emailError = document.getElementById("emailError");
+const passwordError = document.getElementById("passwordError");
+
+function clearErrors() {
+  loginError.style.display = "none";
+  emailError.classList.remove("show");
+  passwordError.classList.remove("show");
+  username.classList.remove("is-invalid");
+  password.classList.remove("is-invalid");
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function isValidPhone(phone) {
+  return /^[+]?[0-9\s]{8,}$/.test(phone);
+}
+
+async function handleLogin(event) {
+  event.preventDefault();
+  clearErrors();
+
+  const identifier = username.value.trim();
+  const pass = password.value.trim();
+
+  if (identifier === "") {
+    username.classList.add("is-invalid");
+    emailError.classList.add("show");
+    return false;
+  }
+
+  if (!isValidEmail(identifier) && !isValidPhone(identifier)) {
+    username.classList.add("is-invalid");
+    emailError.textContent = "Email ou numéro incorrect";
+    emailError.classList.add("show");
+    return false;
+  }
+
+  if (pass === "") {
+    password.classList.add("is-invalid");
+    passwordError.classList.add("show");
+    return false;
+  }
+
+  try {
+    const data = isValidEmail(identifier)
+      ? { email: identifier, password: pass }
+      : { phone: identifier, password: pass };
+
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if (result.success === true) {
+      localStorage.setItem("currentUser", JSON.stringify(result.user));
+      window.location.href = "buy.html"; // ✅ NEXT PAGE
+    } else {
+      loginError.textContent = result.error;
+      loginError.style.display = "block";
     }
 
-    async function handleLogin(event) {
-      event.preventDefault();
-      clearErrors();
+  } catch (e) {
+    loginError.textContent = "Erreur serveur";
+    loginError.style.display = "block";
+  }
 
-      const email = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const loginBtn = document.getElementById('loginBtn');
-
-      if (email === '') {
-        document.getElementById('username').classList.add('is-invalid');
-        document.getElementById('emailError').classList.add('show');
-        return false;
-      }
-
-      if (password === '') {
-        document.getElementById('password').classList.add('is-invalid');
-        document.getElementById('passwordError').classList.add('show');
-        return false;
-      }
-
-      loginBtn.disabled = true;
-
-      try {
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          // ✅ حفظ المستخدم في sessionStorage
-          sessionStorage.setItem('currentUser', JSON.stringify(result.user));
-
-          // ✅ إضافة: حفظ المستخدم في localStorage ليتم استرجاعه من buy.html
-          localStorage.setItem('currentUser', JSON.stringify(result.user));
-
-          window.location.href = 'buy.html';
-        } else {
-          document.getElementById('loginError').textContent = result.error;
-          document.getElementById('loginError').style.display = 'block';
-        }
-
-      } catch (error) {
-        document.getElementById('loginError').textContent = 'Erreur de connexion au serveur';
-        document.getElementById('loginError').style.display = 'block';
-      } finally {
-        loginBtn.disabled = false;
-      }
-
-      return false;
-    }
+  return false;
+}
 </script>

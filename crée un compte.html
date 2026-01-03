@@ -145,7 +145,7 @@
         return ok;
     };
 
-    // ✅ FIXED: Save to server without blocking the redirect
+    //  FIXED: Save to server without blocking the redirect
     const saveUserToServer = (data) => {
         // Use setTimeout with 0ms to make it non-blocking
         setTimeout(() => {
@@ -182,13 +182,13 @@
             password: document.getElementById('password').value
         };
 
-        // ✅ Save to LocalStorage first
+        //  Save to LocalStorage first
         localStorage.setItem('currentUser', JSON.stringify(userData));
 
-        // ✅ Try to save to server (non-blocking)
+        //  Try to save to server (non-blocking)
         saveUserToServer(userData);
 
-        // ✅ Always redirect immediately after saving to localStorage
+        //  Always redirect immediately after saving to localStorage
         setTimeout(() => {
             window.location.href = 'electonic.html';
         }, 500); // Small delay to show "Saving..." message

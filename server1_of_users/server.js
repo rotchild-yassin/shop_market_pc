@@ -103,6 +103,94 @@ app.post('/api/users', async (req, res) => {
     }
 });
 
+/* ===================== FORGOT PASSWORD ===================== */
+const nodemailer = require('nodemailer');
+const verificationCodes = {};
+
+// CONFIGURATION: Replace with your actual Gmail credentials
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'YOUR_EMAIL@gmail.com', // TODO: REPLACE THIS
+        pass: 'YOUR_APP_PASSWORD'    // TODO: REPLACE THIS (App Password, not login password)
+    }
+});
+
+app.post('/api/users/check-email', async (req, res) => {
+    try {
+        const { email } = req.body;
+        const data = await readUsers();
+        const user = data.users.find(u => u.email === email.toLowerCase());
+
+        if (user) {
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            verificationCodes[email.toLowerCase()] = code;
+
+            // Send email
+            const mailOptions = {
+                from: 'ShopMarket <YOUR_EMAIL@gmail.com>',
+                to: email,
+                subject: 'Code de vérification - ShopMarket',
+                text: `Votre code de vérification est : ${code}`,
+                html: `<p>Votre code de vérification est : <strong>${code}</strong></p>`
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log('Error sending email:', error);
+                    // Fallback to console for testing if email fails
+                    console.log(`VERIFICATION CODE for ${email}: ${code}`);
+                    return res.json({ success: true, message: 'Code generated (Email failed, check console)' });
+                } else {
+                    console.log('Email sent: ' + info.response);
+                    return res.json({ success: true, message: 'Code sent to email' });
+                }
+            });
+
+        } else {
+            return res.json({ success: false, error: 'Email not found' });
+        }
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+});
+
+app.post('/api/users/verify-code', (req, res) => {
+    const { email, code } = req.body;
+    if (verificationCodes[email.toLowerCase()] === code) {
+        return res.json({ success: true });
+    } else {
+        return res.json({ success: false, error: 'Invalid verification code' });
+    }
+});
+
+app.post('/api/users/reset-password', async (req, res) => {
+    try {
+        const { email, newPassword } = req.body;
+        const data = await readUsers();
+        const userIndex = data.users.findIndex(u => u.email === email.toLowerCase());
+
+        if (userIndex !== -1) {
+            if (!newPassword || newPassword.includes(' ') || newPassword.length > 10) {
+                return res.json({ success: false, error: 'Invalid password format' });
+            }
+
+            data.users[userIndex].password = newPassword;
+            await writeUsers(data);
+
+            // Clear the code
+            delete verificationCodes[email.toLowerCase()];
+
+            return res.json({ success: true, message: 'Password updated successfully' });
+        } else {
+            return res.json({ success: false, error: 'User not found' });
+        }
+    } catch (e) {
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+});
+
 /* ===================== LOGIN (EMAIL OR PHONE) ===================== */
 app.post('/api/users/login', async (req, res) => {
     try {
